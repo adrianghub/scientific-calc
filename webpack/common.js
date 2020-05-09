@@ -7,7 +7,7 @@ const sourcePath = path(__dirname, '..', 'src');
 
 module.exports = {
 	entry: {
-		index: path(sourcePath, 'index.ts'),
+		index: path(sourcePath, 'index.js'),
 	},
 	output: {
 		path: path(destinationPath),
