@@ -3,6 +3,7 @@ import "./style.css";
 const ADDITION_ID = "js-addition";
 const BACK_ID = "js-back";
 const CLEAR_ID = "js-clear";
+const CANCEL_ID = "js-cancel";
 const COMMA_ID = "js-comma";
 const DISPLAY_ID = "js-display";
 const DIVIDE_ID = "js-divide";
@@ -69,7 +70,9 @@ class Calculator {
         this.bindFunctionToButton(MEMORY_READ_ID, () => this.memoryRead());
         this.bindFunctionToButton(MEMORY_ADD_ID, () => this.memoryAdd());   
         this.bindFunctionToButton(MEMORY_MINUS_ID, () => this.memoryMinus());   
-        this.bindFunctionToButton(MEMORY_SET_ID, () => this.memorySet());   
+        this.bindFunctionToButton(MEMORY_SET_ID, () => this.memorySet());  
+        this.bindFunctionToButton(CLEAR_ID, () => this.clear()); 
+        this.bindFunctionToButton(CANCEL_ID, () => this.cancel());
     }
     
     bindFunctionToButton(elementId, callback) {
@@ -109,8 +112,7 @@ class Calculator {
 
     memoryRead() {
         this.wasSpecialFunctionClicked = true;
-        this.displayValue = this.memoryValue;
-        this.display.textContent = this.memoryValue.toString();
+        this.changeDisplayValue(this.memoryValue);
     }
 
     memoryAdd() {
@@ -126,6 +128,21 @@ class Calculator {
     memorySet() {
         this.wasSpecialFunctionClicked = true;
         this.memoryValue = Number(this.displayValue);
+    }
+
+    clear() {
+        this.previosValue = 0;
+        this.selectedFunction = null;
+        this.changeDisplayValue(null);
+    }
+
+    cancel() {
+        this.changeDisplayValue(null);
+    }
+
+    changeDisplayValue(value) {
+        this.displayValue = value;
+        this.display.textContent = value === null ? '0' : value.toString();
     }
 }
 
