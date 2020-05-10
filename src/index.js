@@ -77,6 +77,7 @@ class Calculator {
         this.bindFunctionToButton(MULTIPLY_ID, () => this.multiplication());
         this.bindFunctionToButton(DIVIDE_ID, () => this.division());
         this.bindFunctionToButton(EQUAL_ID, () => this.equal());
+        this.bindFunctionToButton(BACK_ID, () => this.back());
 
 	}
 
@@ -230,6 +231,10 @@ class Calculator {
         }
 
         this.wasEqualClicked = true;
+    }
+
+    back() {
+        this.changeDisplayValue(this.displayValue ? this.displayValue.slice(0, -1) : null);
     }
 
 
