@@ -141,57 +141,31 @@ class Calculator {
 	}
 
 	addition(hasRepeatedValue) {
-        if (this.selectedFunction !== this.addition && this.selectedFunction) {
-            this.selectedFunction(hasRepeatedValue);
-        }
-
-		this.selectedFunction = this.addition;
+        this.callPreviousFunctionAndAssignNew(this.addition, hasRepeatedValue);
+        
 		if (this.isFunctionDone) {
-			this.repeatedValue = Number(this.previousValue);
-			this.displayValue = "0";
-			this.wasEqualClicked = false;
-
+            this.setValuesForIsFunctionDone();
 			return;
 		}
 
-		const displayValue = Number(this.display.textContent);
-		const previousValue = hasRepeatedValue
-			? this.repeatedValue
-			: Number(this.previousValue);
+        const [ displayValue, previousValue ] = this.getDisplayAndPreviousValue(hasRepeatedValue);
 		const newValue = displayValue + previousValue;
 
-		this.isFunctionDone = true;
-		this.repeatedValue = hasRepeatedValue
-			? this.repeatedValue
-            : this.wasEqualClicked
-                ? newValue
-                : Number(this.display.textContent);
+        this.getRepeatedValue(hasRepeatedValue, newValue);
 
-        this.wasEqualClicked = false;
-        this.previousValue = newValue;
-        this.displayValue = null;
-        this.display.textContent = newValue;
-
+        this.setValuesAfterNewValueIsSet(newValue);
     }
     
+    
     subtraction(hasRepeatedValue) {
-        if (this.selectedFunction !== this.subtraction && this.selectedFunction) {
-            this.selectedFunction(hasRepeatedValue);
-        }
+        this.callPreviousFunctionAndAssignNew(this.subtraction, hasRepeatedValue);
 
-        this.selectedFunction = this.subtraction;
         if(this.isFunctionDone) {
-            this.repeatedValue = Number(this.previousValue);
-            this.displayValue = "0";
-           this.wasEqualClicked = false;
-
+            this.setValuesForIsFunctionDone();
             return;
         }        
 
-        const displayValue = Number(this.display.textContent);
-		const previousValue = hasRepeatedValue
-			? this.repeatedValue
-            : Number(this.previousValue);
+        const [ displayValue, previousValue ] = this.getDisplayAndPreviousValue(hasRepeatedValue);
         let newValue;
 
         if (this.previousValue !== null) {
@@ -199,14 +173,47 @@ class Calculator {
                 ? displayValue - this.repeatedValue
                 : previousValue - displayValue;
 
-                    
-            this.repeatedValue = hasRepeatedValue
-                ? this.repeatedValue
-                : this.wasEqualClicked
-                    ? newValue
-                    : Number(this.display.textContent);
+                
+            this.getRepeatedValue(hasRepeatedValue, newValue);
         }
 
+        this.setValuesAfterNewValueIsSet(newValue);
+        
+    }
+
+
+    callPreviousFunctionAndAssignNew(currentFunction, hasRepeatedValue) {
+        if (this.selectedFunction !== currentFunction && this.selectedFunction) {
+        this.selectedFunction(hasRepeatedValue);
+    }
+        this.selectedFunction = currentFunction;
+    }
+
+    setValuesForIsFunctionDone() {
+        this.repeatedValue = Number(this.previousValue);
+        this.displayValue = "0";
+        this.wasEqualClicked = false;
+    }
+
+        
+    getDisplayAndPreviousValue(hasRepeatedValue) {
+        const displayValue = Number(this.display.textContent);
+        const previousValue = hasRepeatedValue
+            ? this.repeatedValue
+            : Number(this.previousValue);
+            
+            return [displayValue, previousValue];
+    }
+
+    getRepeatedValue(hasRepeatedValue, newValue) {
+        this.repeatedValue = hasRepeatedValue
+    	? this.repeatedValue
+        : this.wasEqualClicked
+            ? newValue
+            : Number(this.display.textContent);
+    }
+
+    setValuesAfterNewValueIsSet(newValue) {
         this.isFunctionDone = true;
         this.wasEqualClicked = false;
         this.displayValue = null;
@@ -214,10 +221,13 @@ class Calculator {
         this.previousValue = this.previousValue !== null ? newValue : this.display.textContent;
     }
 
+    
+    
 	changeDisplayValue(value) {
 		this.displayValue = value;
 		this.display.textContent = value === null ? "0" : value.toString();
-	}
+    }
+
 }
 
 new Calculator();
