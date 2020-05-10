@@ -76,6 +76,7 @@ class Calculator {
         this.bindFunctionToButton(SUBTRACTION_ID, () => this.subtraction());
         this.bindFunctionToButton(MULTIPLY_ID, () => this.multiplication());
         this.bindFunctionToButton(DIVIDE_ID, () => this.division());
+        this.bindFunctionToButton(EQUAL_ID, () => this.equal());
 
 	}
 
@@ -217,6 +218,18 @@ class Calculator {
 
 
         this.setValuesAfterNewValueIsSet(newValue);
+    }
+
+    equal() {
+
+        this.isFunctionDone = false;
+        if (!this.wasEqualClicked){
+            this.selectedFunction(false);
+        } else {
+            this.selectedFunction(true);
+        }
+
+        this.wasEqualClicked = true;
     }
 
 
