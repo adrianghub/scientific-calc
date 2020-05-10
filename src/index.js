@@ -64,7 +64,14 @@ class Calculator {
 	}
 
 	bindToButtons() {
-		return;
+        const memoryClearElement = document.getElementById(MEMORY_CLEAR_ID);
+        
+        if(!memoryClearElement) {
+            console.warn(`Nie znaleziono elementu o id ${MEMORY_CLEAR_ID}`);
+        } else {
+            memoryClearElement.addEventListener('click', () => this.memoryClear());
+        }
+        return;
 	}
 
 	concatenateNumber(event) {
@@ -84,7 +91,12 @@ class Calculator {
         this.wasSpecialFunctionClicked = false;
         this.isFunctionDone = false;
         this.display.textContent = this.displayValue;
-	}
+    }
+    
+    memoryClear() {
+        this.wasSpecialFunctionClicked = true;
+        this.memoryValue = 0;
+    }
 }
 
 new Calculator();
