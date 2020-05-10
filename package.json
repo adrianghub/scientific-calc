@@ -1,10 +1,11 @@
 {
-  "name": "doman-react-boilerplate",
+  "name": "scientific-calculator",
   "version": "1.0.0",
-  "description": "Boilerplate for frontend projects configured for React library and using more valuable tools for development",
-  "main": "index.ts",
+  "main": "index.js",
   "scripts": {
     "start": "webpack-dev-server --mode=development",
+    "pre-deploy": "npm run build",
+    "deploy": "gh-pages -d build",
     "build": "webpack --mode=production",
     "checkts": "tsc"
   },
@@ -20,12 +21,12 @@
     "eslint",
     "configuration"
   ],
-  "author": "Mateusz \"doman89\" Domanski",
+  "author": "Adrian Zinko / AdrianGHub",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/doman89/react-boilerplate/issues"
+    "url": "https://github.com/AdrianGHub"
   },
-  "homepage": "https://github.com/doman89/react-boilerplate#readme",
+  "homepage": "http://adrianghub.github.io/scientific-calc",
   "devDependencies": {
     "@namics/stylelint-bem": "^6.3.0",
     "@types/react": "^16.9.19",
@@ -40,6 +41,7 @@
     "eslint-plugin-react-hooks": "^2.3.0",
     "file-loader": "^5.1.0",
     "fork-ts-checker-webpack-plugin": "^4.0.3",
+    "gh-pages": "^2.2.0",
     "html-webpack-plugin": "^3.2.0",
     "mini-css-extract-plugin": "^0.9.0",
     "node-sass": "^4.13.1",
