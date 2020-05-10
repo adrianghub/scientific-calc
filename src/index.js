@@ -1,4 +1,4 @@
-import "./style.css";
+import "./style.scss";
 
 const ADDITION_ID = "js-addition";
 const BACK_ID = "js-back";
@@ -82,8 +82,8 @@ class Calculator {
         this.attachFunctionToButton(COMMA_ID, () => this.addComma());
         this.attachFunctionToButton(PERCENT_ID, () => this.percent());
         this.attachFunctionToButton(SQUARE_ID, () => this.square());
-        this.attachFunctionToButton(FRACTION_ID, () => this.power());
-        this.attachFunctionToButton(this.oneXth, () => this.oneXth());
+        this.attachFunctionToButton(POWER_ID, () => this.power());
+        this.attachFunctionToButton(FRACTION_ID, () => this.oneXth());
 	}
 
 	attachFunctionToButton(elementId, callback) {
