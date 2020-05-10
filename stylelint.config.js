@@ -31,7 +31,6 @@ module.exports = {
 		'function-calc-no-unspaced-operator': true,
 		'function-comma-space-after': 'always',
 		'function-linear-gradient-no-nonstandard-direction': true,
-		'indentation': 'tab',
 		'keyframe-declaration-no-important': true,
 		'max-empty-lines': 1,
 		'media-feature-name-no-unknown': true,
