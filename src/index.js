@@ -209,7 +209,7 @@ class Calculator {
 		);
 		const newValue = displayValue * previousValue;
 
-		this.getRepeatedValue(hasRepeatedValue, newValue);
+		this.repeatedValue = this.getRepeatedValue(hasRepeatedValue, newValue);
 		this.afterNewValueCalculation(newValue);
 	}
 
@@ -245,13 +245,6 @@ class Calculator {
 		this.wasEqualClicked = true;
     }
     
-    percent() {
-        const newValue = this.previousValue * this.displayValue / 100;
-
-        this.wasSpecialFunctionClicked = true;
-        this.wasEqualClicked = false;
-        this.changeDisplayValue(newValue);
-    }
 
 	back() {
 		this.changeDisplayValue(
@@ -273,7 +266,17 @@ class Calculator {
 				`${this.displayValue ? this.displayValue : "0"}.`
 			);
 		}
-	}
+    }
+    
+    percent() {
+        this.callSpecialFunction(this.previousValue * this.displayValue / 100);
+    }
+
+    callSpecialFunction(value) {
+        this.wasSpecialFunctionClicked = false;
+        this.wasSpecialFunctionClicked = true;
+        this.changeDisplayValue(value);
+    }
 
 	callPreviousFunctionAndChangeIt(previousFunction, hasRepeatedValue) {
 		if (
