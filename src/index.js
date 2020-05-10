@@ -74,6 +74,9 @@ class Calculator {
         this.bindFunctionToButton(CANCEL_ID, () => this.cancel());
         this.bindFunctionToButton(ADDITION_ID, () => this.addition());
         this.bindFunctionToButton(SUBTRACTION_ID, () => this.subtraction());
+        this.bindFunctionToButton(MULTIPLY_ID, () => this.multiplication());
+        this.bindFunctionToButton(DIVIDE_ID, () => this.division());
+
 	}
 
 	bindFunctionToButton(elementId, callback) {
@@ -155,7 +158,7 @@ class Calculator {
 
         this.setValuesAfterNewValueIsSet(newValue);
     }
-    
+
     
     subtraction(hasRepeatedValue) {
         this.callPreviousFunctionAndAssignNew(this.subtraction, hasRepeatedValue);
@@ -179,6 +182,41 @@ class Calculator {
 
         this.setValuesAfterNewValueIsSet(newValue);
         
+    }
+
+    multiplication(hasRepeatedValue) {
+        this.callPreviousFunctionAndAssignNew(this.multiplication, hasRepeatedValue);
+        
+		if (this.isFunctionDone) {
+            this.setValuesForIsFunctionDone();
+			return;
+		}
+
+        const [ displayValue, previousValue ] = this.getDisplayAndPreviousValue(hasRepeatedValue);
+		const newValue = displayValue * previousValue;
+
+        this.getRepeatedValue(hasRepeatedValue, newValue);
+
+        this.setValuesAfterNewValueIsSet(newValue);
+    }
+
+    division(hasRepeatedValue) {
+        this.callPreviousFunctionAndAssignNew(this.division, hasRepeatedValue);
+
+        if(this.isFunctionDone) {
+            this.setValuesForIsFunctionDone();
+            return;
+        }        
+
+        const [ displayValue, previousValue ] = this.getDisplayAndPreviousValue(hasRepeatedValue);
+        const newValue = hasRepeatedValue
+                ? displayValue / this.repeatedValue
+                : previousValue === 0 
+                    ? displayValue
+                    : previousValue / displayValue;
+
+
+        this.setValuesAfterNewValueIsSet(newValue);
     }
 
 
