@@ -77,8 +77,9 @@ class Calculator {
 		this.bindFunctionToButton(MULTIPLY_ID, () => this.multiplication());
 		this.bindFunctionToButton(DIVIDE_ID, () => this.division());
 		this.bindFunctionToButton(EQUAL_ID, () => this.equal());
-        this.bindFunctionToButton(BACK_ID, () => this.back());
+		this.bindFunctionToButton(BACK_ID, () => this.back());
         this.bindFunctionToButton(INVERT_ID, () => this.inversion());
+        this.bindFunctionToButton(COMMA_ID, () => this.addComma());
 	}
 
 	bindFunctionToButton(elementId, callback) {
@@ -254,17 +255,24 @@ class Calculator {
 				? -Math.abs(this.displayValue)
 				: Math.abs(this.displayValue)
 		);
-    }
-    
+	}
 
-	callPreviousFunctionAndAssignNew(currentFunction, hasRepeatedValue) {
+	addComma() {
+		if (!this.display.textContent.includes(".")) {
+			this.changeDisplayValue(
+				`${this.displayValue ? this.displayValue : "0"}.`
+			);
+		}
+	}
+
+	callPreviousFunctionAndAssignNew(previousFunction, hasRepeatedValue) {
 		if (
-			this.selectedFunction !== currentFunction &&
+			this.selectedFunction !== previousFunction &&
 			this.selectedFunction
 		) {
 			this.selectedFunction(hasRepeatedValue);
 		}
-		this.selectedFunction = currentFunction;
+		this.selectedFunction = previousFunction;
 	}
 
 	setValuesForIsFunctionDone() {
