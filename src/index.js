@@ -34,12 +34,12 @@ class Calculator {
 		this.wasEqualClicked = false;
 		this.wasSpecialFunctionClicked = false;
 
-		this.bindToDisplay();
-		this.bindToNumbers();
-		this.bindToButtons();
+		this.attachToDisplay();
+		this.attachToNumbers();
+		this.attachToButtons();
 	}
 
-	bindToDisplay() {
+	attachToDisplay() {
 		const display = document.getElementById(DISPLAY_ID);
 
 		if (!display) {
@@ -50,11 +50,11 @@ class Calculator {
 		this.display = display;
 	}
 
-	bindToNumbers() {
+	attachToNumbers() {
 		const numbers = document.querySelectorAll(NUMBER_CLASS_SELECTOR);
 
 		if (numbers.length !== NUMBER_OF_NUMBERS_IN_KEYBOARD) {
-			console.warn("W klawiaturze brakuje cyfr");
+			console.warn("W klawiaturze brakuje cyfr. Może pojawic się problem z poprawnym działaniem kalkulatora.");
 		}
 
 		numbers.forEach((number) =>
@@ -64,26 +64,26 @@ class Calculator {
 		);
 	}
 
-	bindToButtons() {
-		this.bindFunctionToButton(MEMORY_CLEAR_ID, () => this.memoryClear());
-		this.bindFunctionToButton(MEMORY_READ_ID, () => this.memoryRead());
-		this.bindFunctionToButton(MEMORY_ADD_ID, () => this.memoryAdd());
-		this.bindFunctionToButton(MEMORY_MINUS_ID, () => this.memoryMinus());
-		this.bindFunctionToButton(MEMORY_SET_ID, () => this.memorySet());
-		this.bindFunctionToButton(CLEAR_ID, () => this.clear());
-		this.bindFunctionToButton(CANCEL_ID, () => this.cancel());
-		this.bindFunctionToButton(ADDITION_ID, () => this.addition());
-		this.bindFunctionToButton(SUBTRACTION_ID, () => this.subtraction());
-		this.bindFunctionToButton(MULTIPLY_ID, () => this.multiplication());
-		this.bindFunctionToButton(DIVIDE_ID, () => this.division());
-		this.bindFunctionToButton(EQUAL_ID, () => this.equal());
-		this.bindFunctionToButton(BACK_ID, () => this.back());
-        this.bindFunctionToButton(INVERT_ID, () => this.inversion());
-        this.bindFunctionToButton(COMMA_ID, () => this.addComma());
-        this.bindFunctionToButton(PERCENT_ID, () => this.percent());
+	attachToButtons() {
+		this.attachFunctionToButton(MEMORY_CLEAR_ID, () => this.memoryClear());
+		this.attachFunctionToButton(MEMORY_READ_ID, () => this.memoryRead());
+		this.attachFunctionToButton(MEMORY_ADD_ID, () => this.memoryAdd());
+		this.attachFunctionToButton(MEMORY_MINUS_ID, () => this.memoryMinus());
+		this.attachFunctionToButton(MEMORY_SET_ID, () => this.memorySet());
+		this.attachFunctionToButton(CLEAR_ID, () => this.clear());
+		this.attachFunctionToButton(CANCEL_ID, () => this.cancel());
+		this.attachFunctionToButton(ADDITION_ID, () => this.addition());
+		this.attachFunctionToButton(SUBTRACTION_ID, () => this.subtraction());
+		this.attachFunctionToButton(MULTIPLY_ID, () => this.multiplication());
+		this.attachFunctionToButton(DIVIDE_ID, () => this.division());
+		this.attachFunctionToButton(EQUAL_ID, () => this.equal());
+		this.attachFunctionToButton(BACK_ID, () => this.back());
+        this.attachFunctionToButton(INVERT_ID, () => this.invertNumber());
+        this.attachFunctionToButton(COMMA_ID, () => this.addComma());
+        this.attachFunctionToButton(PERCENT_ID, () => this.percent());
 	}
 
-	bindFunctionToButton(elementId, callback) {
+	attachFunctionToButton(elementId, callback) {
 		const element = document.getElementById(elementId);
 
 		if (!elementId) {
@@ -102,13 +102,13 @@ class Calculator {
 				: this.displayValue + event.target.textContent;
 
 		if (this.wasEqualClicked) {
-			this.previosValue = 0;
+			this.previousValue = 0;
 			this.repeatedValue = 0;
 			this.wasEqualClicked = false;
 		}
 
+        this.isFunctionDone = false;
 		this.wasSpecialFunctionClicked = false;
-		this.isFunctionDone = false;
 		this.display.textContent = this.displayValue;
 	}
 
@@ -138,7 +138,7 @@ class Calculator {
 	}
 
 	clear() {
-		this.previosValue = 0;
+		this.previousValue = null;
 		this.selectedFunction = null;
 		this.changeDisplayValue(null);
 	}
@@ -148,35 +148,36 @@ class Calculator {
 	}
 
 	addition(hasRepeatedValue) {
-		this.callPreviousFunctionAndAssignNew(this.addition, hasRepeatedValue);
+		this.callPreviousFunctionAndChangeIt(this.addition, hasRepeatedValue);
 
 		if (this.isFunctionDone) {
-			this.setValuesForIsFunctionDone();
+			this.handleSecondClickOnFunction();
 			return;
 		}
 
-		const [displayValue, previousValue] = this.getDisplayAndPreviousValue(
+		const [displayValue, previousValue] = this.getValuesToCalculations(
 			hasRepeatedValue
 		);
 		const newValue = displayValue + previousValue;
 
 		this.getRepeatedValue(hasRepeatedValue, newValue);
 
-		this.setValuesAfterNewValueIsSet(newValue);
+		this.afterNewValueCalculation(newValue);
 	}
 
 	subtraction(hasRepeatedValue) {
-		this.callPreviousFunctionAndAssignNew(
+		this.callPreviousFunctionAndChangeIt(
 			this.subtraction,
 			hasRepeatedValue
 		);
 
 		if (this.isFunctionDone) {
-			this.setValuesForIsFunctionDone();
+            this.handleSecondClickOnFunction();
+            
 			return;
 		}
 
-		const [displayValue, previousValue] = this.getDisplayAndPreviousValue(
+		const [displayValue, previousValue] = this.getValuesToCalculations(
 			hasRepeatedValue
 		);
 		let newValue;
@@ -189,48 +190,48 @@ class Calculator {
 			this.repeatedValue = this.getRepeatedValue(hasRepeatedValue, newValue);
 		}
 
-		this.setValuesAfterNewValueIsSet(newValue);
+		this.afterNewValueCalculation(newValue);
 	}
 
 	multiplication(hasRepeatedValue) {
-		this.callPreviousFunctionAndAssignNew(
+		this.callPreviousFunctionAndChangeIt(
 			this.multiplication,
 			hasRepeatedValue
 		);
 
 		if (this.isFunctionDone) {
-			this.setValuesForIsFunctionDone();
+			this.handleSecondClickOnFunction();
 			return;
 		}
 
-		const [displayValue, previousValue] = this.getDisplayAndPreviousValue(
+		const [displayValue, previousValue] = this.getValuesToCalculations(
 			hasRepeatedValue
 		);
 		const newValue = displayValue * previousValue;
 
 		this.getRepeatedValue(hasRepeatedValue, newValue);
-
-		this.setValuesAfterNewValueIsSet(newValue);
+		this.afterNewValueCalculation(newValue);
 	}
 
 	division(hasRepeatedValue) {
-		this.callPreviousFunctionAndAssignNew(this.division, hasRepeatedValue);
+		this.callPreviousFunctionAndChangeIt(this.division, hasRepeatedValue);
 
 		if (this.isFunctionDone) {
-			this.setValuesForIsFunctionDone();
+			this.handleSecondClickOnFunction();
 			return;
 		}
 
-		const [displayValue, previousValue] = this.getDisplayAndPreviousValue(
+		const [displayValue, previousValue] = this.getValuesToCalculations(
 			hasRepeatedValue
 		);
 		const newValue = hasRepeatedValue
 			? displayValue / this.repeatedValue
 			: previousValue === 0
-			? displayValue
-			: previousValue / displayValue;
+                ? displayValue
 
-		this.setValuesAfterNewValueIsSet(newValue);
+                    : previousValue / displayValue;
+        this.repeatedValue = this.getRepeatedValue(hasRepeatedValue, newValue);
+		this.afterNewValueCalculation(newValue);
 	}
 
 	equal() {
@@ -245,7 +246,7 @@ class Calculator {
     }
     
     percent() {
-        const newValue = this.previosValue * this.displayValue / 100;
+        const newValue = this.previousValue * this.displayValue / 100;
 
         this.wasSpecialFunctionClicked = true;
         this.wasEqualClicked = false;
@@ -258,7 +259,7 @@ class Calculator {
 		);
 	}
 
-	inversion() {
+	invertNumber() {
 		this.changeDisplayValue(
 			this.displayValue >= 0
 				? -Math.abs(this.displayValue)
@@ -274,7 +275,7 @@ class Calculator {
 		}
 	}
 
-	callPreviousFunctionAndAssignNew(previousFunction, hasRepeatedValue) {
+	callPreviousFunctionAndChangeIt(previousFunction, hasRepeatedValue) {
 		if (
 			this.selectedFunction !== previousFunction &&
 			this.selectedFunction
@@ -284,30 +285,13 @@ class Calculator {
 		this.selectedFunction = previousFunction;
 	}
 
-	setValuesForIsFunctionDone() {
-		this.repeatedValue = Number(this.previousValue);
+	handleSecondClickOnFunction() {
+		this.repeatedValue = this.getRepeatedValue(null, this.previousValue);
 		this.displayValue = "0";
 		this.wasEqualClicked = false;
 	}
-
-	getDisplayAndPreviousValue(hasRepeatedValue) {
-		const displayValue = Number(this.display.textContent);
-		const previousValue = hasRepeatedValue
-			? this.repeatedValue
-			: Number(this.previousValue);
-
-		return [displayValue, previousValue];
-	}
-
-	getRepeatedValue(hasRepeatedValue, newValue) {
-		this.repeatedValue = hasRepeatedValue
-			? this.repeatedValue
-			: this.wasEqualClicked
-			? newValue
-			: Number(this.display.textContent);
-	}
-
-	setValuesAfterNewValueIsSet(newValue) {
+    
+    afterNewValueCalculation(newValue) {
 		this.isFunctionDone = true;
 		this.wasEqualClicked = false;
 		this.displayValue = null;
@@ -315,12 +299,27 @@ class Calculator {
 			this.previousValue !== null ? newValue : this.display.textContent;
 		this.previousValue =
 			this.previousValue !== null ? newValue : this.display.textContent;
+    }
+
+	getRepeatedValue(hasRepeatedValue, newValue) {
+        if (hasRepeatedValue === null ) {
+            return Number(newValue);
+        }
+
+        return hasRepeatedValue ? this.repeatedValue : this.wasEqualClicked ? newValue : Number(this.display.textContent);
 	}
+
+    getValuesToCalculations(hasRepetedValue) {
+        const displayValue = Number(this.display.textContent);
+        const previousValue = hasRepetedValue ? this.repeatedValue : Number(this.previousValue);
+
+        return [displayValue, previousValue];
+    }
 
 	changeDisplayValue(value) {
 		const isNoValue = value === null || value === "";
 
-		this.displayValue = value;
+		this.displayValue = isNoValue ? null : value.toString();
 		this.display.textContent = isNoValue ? "0" : value.toString();
 	}
 }
