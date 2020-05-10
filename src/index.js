@@ -9,11 +9,11 @@ const DIVIDE_ID = "js-divide";
 const EQUAL_ID = "js-equal";
 const FRACTION_ID = "js-fraction";
 const INVERT_ID = "js-invertion";
-const MEMORY_ADD_ID = "js=M+";
+const MEMORY_ADD_ID = "js-M+";
 const MEMORY_CLEAR_ID = "js-MC";
-const MEMEORY_MINUS_ID = "js-M-";
-const MEMEORY_READ_ID = "js-MR";
-const MEMEORY_SET_ID = "js-MS";
+const MEMORY_MINUS_ID = "js-M-";
+const MEMORY_READ_ID = "js-MR";
+const MEMORY_SET_ID = "js-MS";
 const MULTIPLY_ID = "js-multiply";
 const NUMBER_CLASS_SELECTOR = ".calculator__button--is-number";
 const NUMBER_OF_NUMBERS_IN_KEYBOARD = 10;
@@ -64,15 +64,24 @@ class Calculator {
 	}
 
 	bindToButtons() {
-        const memoryClearElement = document.getElementById(MEMORY_CLEAR_ID);
+
+        this.bindFunctionToButton(MEMORY_CLEAR_ID, () => this.memoryClear());
+        this.bindFunctionToButton(MEMORY_READ_ID, () => this.memoryRead());
+        this.bindFunctionToButton(MEMORY_ADD_ID, () => this.memoryAdd());   
+        this.bindFunctionToButton(MEMORY_MINUS_ID, () => this.memoryMinus());   
+        this.bindFunctionToButton(MEMORY_SET_ID, () => this.memorySet());   
+    }
+    
+    bindFunctionToButton(elementId, callback) {
         
-        if(!memoryClearElement) {
-            console.warn(`Nie znaleziono elementu o id ${MEMORY_CLEAR_ID}`);
-        } else {
-            memoryClearElement.addEventListener('click', () => this.memoryClear());
-        }
-        return;
-	}
+        const element = document.getElementById(elementId);
+        
+        if(!elementId) {
+            console.warn(`Nie znaleziono elementu o id ${elementId}`);
+            return;
+        }    
+        element.addEventListener('click', () => callback());
+    }
 
 	concatenateNumber(event) {
 		this.displayValue =
@@ -96,6 +105,27 @@ class Calculator {
     memoryClear() {
         this.wasSpecialFunctionClicked = true;
         this.memoryValue = 0;
+    }
+
+    memoryRead() {
+        this.wasSpecialFunctionClicked = true;
+        this.displayValue = this.memoryValue;
+        this.display.textContent = this.memoryValue.toString();
+    }
+
+    memoryAdd() {
+        this.wasSpecialFunctionClicked = true;
+        this.memoryValue = this.memoryValue + Number(this.displayValue);
+    }
+
+    memoryMinus() {
+        this.wasSpecialFunctionClicked = true;
+        this.memoryValue = this.memoryValue - Number(this.displayValue);
+    }
+
+    memorySet() {
+        this.wasSpecialFunctionClicked = true;
+        this.memoryValue = Number(this.displayValue);
     }
 }
 
