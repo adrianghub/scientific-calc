@@ -280,8 +280,10 @@ class Calculator {
     
     
 	changeDisplayValue(value) {
+        const isNoValue = value === null || value === '';
+
 		this.displayValue = value;
-		this.display.textContent = value === null ? "0" : value.toString();
+		this.display.textContent = isNoValue ? "0" : value.toString();
     }
 
 }
