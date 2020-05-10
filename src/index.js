@@ -81,6 +81,7 @@ class Calculator {
         this.attachFunctionToButton(INVERT_ID, () => this.invertNumber());
         this.attachFunctionToButton(COMMA_ID, () => this.addComma());
         this.attachFunctionToButton(PERCENT_ID, () => this.percent());
+        this.attachFunctionToButton(SQUARE_ID, () => this.square());
 	}
 
 	attachFunctionToButton(elementId, callback) {
@@ -270,6 +271,10 @@ class Calculator {
     
     percent() {
         this.callSpecialFunction(this.previousValue * this.displayValue / 100);
+    }
+
+    square() {
+        this.callSpecialFunction(Math.sqrt(this.displayValue))
     }
 
     callSpecialFunction(value) {
