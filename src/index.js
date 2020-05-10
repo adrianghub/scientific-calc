@@ -80,6 +80,7 @@ class Calculator {
 		this.bindFunctionToButton(BACK_ID, () => this.back());
         this.bindFunctionToButton(INVERT_ID, () => this.inversion());
         this.bindFunctionToButton(COMMA_ID, () => this.addComma());
+        this.bindFunctionToButton(PERCENT_ID, () => this.percent());
 	}
 
 	bindFunctionToButton(elementId, callback) {
@@ -185,7 +186,7 @@ class Calculator {
 				? displayValue - this.repeatedValue
 				: previousValue - displayValue;
 
-			this.getRepeatedValue(hasRepeatedValue, newValue);
+			this.repeatedValue = this.getRepeatedValue(hasRepeatedValue, newValue);
 		}
 
 		this.setValuesAfterNewValueIsSet(newValue);
@@ -241,7 +242,15 @@ class Calculator {
 		}
 
 		this.wasEqualClicked = true;
-	}
+    }
+    
+    percent() {
+        const newValue = this.previosValue * this.displayValue / 100;
+
+        this.wasSpecialFunctionClicked = true;
+        this.wasEqualClicked = false;
+        this.changeDisplayValue(newValue);
+    }
 
 	back() {
 		this.changeDisplayValue(
