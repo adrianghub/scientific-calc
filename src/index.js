@@ -28,8 +28,8 @@ class Calculator {
 		this.memoryValue = 0;
 		this.displayValue = "0";
 		this.selectedFunction = null;
-        this.isFunctionDone = false;
-        this.previosValue = 0;
+		this.isFunctionDone = false;
+		this.previousValue = 0;
 		this.repeatedValue = 0;
 		this.wasEqualClicked = false;
 		this.wasSpecialFunctionClicked = false;
@@ -65,26 +65,26 @@ class Calculator {
 	}
 
 	bindToButtons() {
-
-        this.bindFunctionToButton(MEMORY_CLEAR_ID, () => this.memoryClear());
-        this.bindFunctionToButton(MEMORY_READ_ID, () => this.memoryRead());
-        this.bindFunctionToButton(MEMORY_ADD_ID, () => this.memoryAdd());   
-        this.bindFunctionToButton(MEMORY_MINUS_ID, () => this.memoryMinus());   
-        this.bindFunctionToButton(MEMORY_SET_ID, () => this.memorySet());  
-        this.bindFunctionToButton(CLEAR_ID, () => this.clear()); 
+		this.bindFunctionToButton(MEMORY_CLEAR_ID, () => this.memoryClear());
+		this.bindFunctionToButton(MEMORY_READ_ID, () => this.memoryRead());
+		this.bindFunctionToButton(MEMORY_ADD_ID, () => this.memoryAdd());
+		this.bindFunctionToButton(MEMORY_MINUS_ID, () => this.memoryMinus());
+		this.bindFunctionToButton(MEMORY_SET_ID, () => this.memorySet());
+		this.bindFunctionToButton(CLEAR_ID, () => this.clear());
         this.bindFunctionToButton(CANCEL_ID, () => this.cancel());
-    }
-    
-    bindFunctionToButton(elementId, callback) {
-        
-        const element = document.getElementById(elementId);
-        
-        if(!elementId) {
-            console.warn(`Nie znaleziono elementu o id ${elementId}`);
-            return;
-        }    
-        element.addEventListener('click', () => callback());
-    }
+        this.bindFunctionToButton(ADDITION_ID, () => this.addition());
+        this.bindFunctionToButton(SUBTRACTION_ID, () => this.subtraction());
+	}
+
+	bindFunctionToButton(elementId, callback) {
+		const element = document.getElementById(elementId);
+
+		if (!elementId) {
+			console.warn(`Nie znaleziono elementu o id ${elementId}`);
+			return;
+		}
+		element.addEventListener("click", () => callback());
+	}
 
 	concatenateNumber(event) {
 		this.displayValue =
@@ -92,58 +92,132 @@ class Calculator {
 			this.displayValue === "0" ||
 			this.wasSpecialFunctionClicked
 				? event.target.textContent
-                : this.displayValue + event.target.textContent;
+				: this.displayValue + event.target.textContent;
 
-        if (this.wasEqualClicked) {
-            this.previosValue = 0;
-            this.repeatedValue = 0;
-            this.wasEqualClicked = false;
+		if (this.wasEqualClicked) {
+			this.previosValue = 0;
+			this.repeatedValue = 0;
+			this.wasEqualClicked = false;
+		}
+
+		this.wasSpecialFunctionClicked = false;
+		this.isFunctionDone = false;
+		this.display.textContent = this.displayValue;
+	}
+
+	memoryClear() {
+		this.wasSpecialFunctionClicked = true;
+		this.memoryValue = 0;
+	}
+
+	memoryRead() {
+		this.wasSpecialFunctionClicked = true;
+		this.changeDisplayValue(this.memoryValue);
+	}
+
+	memoryAdd() {
+		this.wasSpecialFunctionClicked = true;
+		this.memoryValue = this.memoryValue + Number(this.displayValue);
+	}
+
+	memoryMinus() {
+		this.wasSpecialFunctionClicked = true;
+		this.memoryValue = this.memoryValue - Number(this.displayValue);
+	}
+
+	memorySet() {
+		this.wasSpecialFunctionClicked = true;
+		this.memoryValue = Number(this.displayValue);
+	}
+
+	clear() {
+		this.previosValue = 0;
+		this.selectedFunction = null;
+		this.changeDisplayValue(null);
+	}
+
+	cancel() {
+		this.changeDisplayValue(null);
+	}
+
+	addition(hasRepeatedValue) {
+        if (this.selectedFunction !== this.addition && this.selectedFunction) {
+            this.selectedFunction(hasRepeatedValue);
         }
 
-        this.wasSpecialFunctionClicked = false;
-        this.isFunctionDone = false;
-        this.display.textContent = this.displayValue;
+		this.selectedFunction = this.addition;
+		if (this.isFunctionDone) {
+			this.repeatedValue = Number(this.previousValue);
+			this.displayValue = "0";
+			this.wasEqualClicked = false;
+
+			return;
+		}
+
+		const displayValue = Number(this.display.textContent);
+		const previousValue = hasRepeatedValue
+			? this.repeatedValue
+			: Number(this.previousValue);
+		const newValue = displayValue + previousValue;
+
+		this.isFunctionDone = true;
+		this.repeatedValue = hasRepeatedValue
+			? this.repeatedValue
+            : this.wasEqualClicked
+                ? newValue
+                : Number(this.display.textContent);
+
+        this.wasEqualClicked = false;
+        this.previousValue = newValue;
+        this.displayValue = null;
+        this.display.textContent = newValue;
+
     }
     
-    memoryClear() {
-        this.wasSpecialFunctionClicked = true;
-        this.memoryValue = 0;
+    subtraction(hasRepeatedValue) {
+        if (this.selectedFunction !== this.subtraction && this.selectedFunction) {
+            this.selectedFunction(hasRepeatedValue);
+        }
+
+        this.selectedFunction = this.subtraction;
+        if(this.isFunctionDone) {
+            this.repeatedValue = Number(this.previousValue);
+            this.displayValue = "0";
+           this.wasEqualClicked = false;
+
+            return;
+        }        
+
+        const displayValue = Number(this.display.textContent);
+		const previousValue = hasRepeatedValue
+			? this.repeatedValue
+            : Number(this.previousValue);
+        let newValue;
+
+        if (this.previousValue !== null) {
+            newValue= hasRepeatedValue
+                ? displayValue - this.repeatedValue
+                : previousValue - displayValue;
+
+                    
+            this.repeatedValue = hasRepeatedValue
+                ? this.repeatedValue
+                : this.wasEqualClicked
+                    ? newValue
+                    : Number(this.display.textContent);
+        }
+
+        this.isFunctionDone = true;
+        this.wasEqualClicked = false;
+        this.displayValue = null;
+        this.display.textContent = this.previousValue !== null ? newValue : this.display.textContent;
+        this.previousValue = this.previousValue !== null ? newValue : this.display.textContent;
     }
 
-    memoryRead() {
-        this.wasSpecialFunctionClicked = true;
-        this.changeDisplayValue(this.memoryValue);
-    }
-
-    memoryAdd() {
-        this.wasSpecialFunctionClicked = true;
-        this.memoryValue = this.memoryValue + Number(this.displayValue);
-    }
-
-    memoryMinus() {
-        this.wasSpecialFunctionClicked = true;
-        this.memoryValue = this.memoryValue - Number(this.displayValue);
-    }
-
-    memorySet() {
-        this.wasSpecialFunctionClicked = true;
-        this.memoryValue = Number(this.displayValue);
-    }
-
-    clear() {
-        this.previosValue = 0;
-        this.selectedFunction = null;
-        this.changeDisplayValue(null);
-    }
-
-    cancel() {
-        this.changeDisplayValue(null);
-    }
-
-    changeDisplayValue(value) {
-        this.displayValue = value;
-        this.display.textContent = value === null ? '0' : value.toString();
-    }
+	changeDisplayValue(value) {
+		this.displayValue = value;
+		this.display.textContent = value === null ? "0" : value.toString();
+	}
 }
 
 new Calculator();
