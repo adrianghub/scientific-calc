@@ -29,7 +29,7 @@ class Calculator {
 		this.displayValue = "0";
 		this.selectedFunction = null;
 		this.isFunctionDone = false;
-		this.previousValue = 0;
+		this.previousValue = null;
 		this.repeatedValue = 0;
 		this.wasEqualClicked = false;
 		this.wasSpecialFunctionClicked = false;
@@ -105,7 +105,7 @@ class Calculator {
 				: this.displayValue + event.target.textContent;
 
 		if (this.wasEqualClicked) {
-			this.previousValue = 0;
+			this.previousValue = null;
 			this.repeatedValue = 0;
 			this.wasEqualClicked = false;
 		}
